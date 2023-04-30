@@ -1,0 +1,17 @@
+/res*
+/properties
+/_assets/
+*~
+*__pycache__*
+.ipynb_checkpoints
+*.DS_Store
+/.venv
+/tmp*
+/temp*
+/lib
+/backup
+/attic
+/data
+/.vscode
+/.venv*
+failedMarabouQuery.ipq
