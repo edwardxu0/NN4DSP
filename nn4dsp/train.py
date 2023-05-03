@@ -1,53 +1,61 @@
-# When running this tutorial in Google Colab, install the required packages
-# with the following.
-# !pip install torchaudio
 
-import torch
-import torchaudio
-
-print(torch.__version__)
-print(torchaudio.__version__)
-
-
-# @title Prepare data and utility functions. {display-mode: "form"}
-# @markdown
-# @markdown You do not need to look into this cell.
-# @markdown Just execute once and you are good to go.
-
-# -------------------------------------------------------------------------------
-# Preparation of data and helper functions.
-# -------------------------------------------------------------------------------
 import os
-
+import time
+import torchaudio
 import matplotlib.pyplot as plt
 from IPython.display import Audio, display
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+
+import numpy as np
+import scipy
+from scipy import signal
+import matplotlib.pyplot as plt
+
+
+
 
 _SAMPLE_DIR = "_assets"
 YESNO_DATASET_PATH = os.path.join(_SAMPLE_DIR, "yes_no")
 os.makedirs(YESNO_DATASET_PATH, exist_ok=True)
 
 
-def train():
-    dataset = torchaudio.datasets.YESNO(YESNO_DATASET_PATH, download=True)
+dataset = torchaudio.datasets.YESNO(YESNO_DATASET_PATH, download=True)
+print(len(dataset))
 
-    print(len(dataset))
+waveform, sample_rate, label = dataset[0]
+waveform = waveform.numpy()
+display(Audio(waveform[0],rate=sample_rate,))
 
-    """
-    for i in [1, 3, 5]:
-        waveform, sample_rate, label = dataset[i]
-        plot_specgram(waveform, sample_rate, title=f"Sample {i}: {label}")
-        play_audio(waveform, sample_rate)
-    """
 
-    waveform, sample_rate, label = dataset[0]
+rng = np.random.default_rng()
 
-    waveform = waveform.numpy()
-    display(
-        Audio(
-            waveform[0],
-            rate=sample_rate,
-        ),
-        autoplay=True,
-    )
+fs = 10e3
+N = 1e5
+amp = 2 * np.sqrt(2)
+noise_power = 0.01 * fs / 2
+time = np.arange(N) / float(fs)
+mod = 500*np.cos(2*np.pi*0.25*time)
+carrier = amp * np.sin(2*np.pi*3e3*time + mod)
+noise = rng.normal(scale=np.sqrt(noise_power),
+                   size=time.shape)
+noise *= np.exp(-time/5)
+x = carrier + noise
 
-    print(waveform.shape)
+#print(x, min(x), max(x))
+plt.plot(x)
+plt.show()
+f, t, Zxx = signal.stft(x, fs, nperseg=1000)
+plt.pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=amp, shading='gouraud')
+plt.title('STFT Magnitude')
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.show()
+plt.plot(Zxx)
+plt.show()

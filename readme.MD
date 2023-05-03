@@ -1,8 +1,9 @@
 Neural Network for Digital Signal Processing(NN4DSP)
 
-### 1. Google Doc proposal link:
+This is a class project to synthesize FFT using neural networks.
 
-https://docs.google.com/document/d/1hODDYrTVdHROYCUiVIldRkKEyY_dicrgcj4uNotezp0/edit?usp=sharing
-
-### 2. More things
-
+### Instructions:
+1) prepare the python3 virtual environment using the `requirements.txt`.
+2) install [DNNV](https://github.com/dlshriver/DNNV) verifier at `./DNNV`.
+3) Execute the implementation with the python notebook `nn4dsp.ipynb`.
+4) Using the `run_verification.sh` to run the verification experiments.
